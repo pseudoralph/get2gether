@@ -1,25 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import nanoid from 'nanoid';
+import axios from 'axios';
 import './App.css';
 
 function App() {
+  const [locationId, setLocationId] = useState(nanoid(8));
+
+  const pushToDb = () => {
+    const baseUrl = 'http://localhost:3001/create/';
+    axios.post(baseUrl + locationId).then(response => console.log(response));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <button onClick={() => setLocationId(nanoid(8))}>refresh</button>
+
+      {locationId}
+      <button onClick={pushToDb}>submit</button>
+    </>
   );
 }
 
