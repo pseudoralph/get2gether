@@ -6,7 +6,6 @@ const pool = new Pool({ database: 'get2gether' });
 
 app.post('/create/:location', (request, response) => {
   const locationId = request.params['location'];
-
   const addLocationSchema = (loc, user = 'null') => {
     return `INSERT INTO meetups(meetup_uid, createed_by_id) VALUES('${loc}', '${user}')`;
   };
@@ -24,14 +23,15 @@ app.post('/create/:location', (request, response) => {
 
 app.get('/:location', (request, response) => {
   const locationId = request.params['location'];
+  const lookupSchema = loc => {
+    return `SELECT * from meetups WHERE meetup_uid = '${loc}'`;
+  };
 
-  pool.query(
-    `SELECT * from meetups WHERE meetup_uid = ${locationId}`,
-    (err, res) => {
-      console.log(res);
-      // response.send(res);
-    }
-  );
+  pool.query(lookupSchema(locationId), (err, res) => {
+    if (res && res.rowCount && res.rows) {
+      response.send(res.rows);
+    } else response.send('0 results');
+  });
 });
 
 app.listen(3001);
