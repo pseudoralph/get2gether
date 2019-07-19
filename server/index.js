@@ -16,11 +16,13 @@ app.post('/create/:location', (request, response, next) => {
   if (locationId.length == 8) {
     pool.query(addLocationSchema(locationId, 'ralph'), (err, res) => {
       if (res && res.rowCount) {
-        response.send(`${res['rowCount']} row added`);
+        response.sendStatus(201)
       } else response.send('unable to add row');
     });
   } else {
-    response.send('invalid location id');
+    response.sendStatus(400)
+
+    // response.send('invalid location id');
   }
 });
 
