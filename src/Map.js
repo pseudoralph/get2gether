@@ -1,34 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+const MapConatiner = ({currentPos}) => {
 
-
-class MapConatiner extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
-  componentDidMount() {
-    console.log(this.props)
-    this.map = L.map('mapView', {
-      center: [49.8419, 24.0315],
+  useEffect(()=>{
+    window.map = L.map('mapView', {
+      center: [45.4648493,-122.6531048],
       zoom: 13,
-      layers: [
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        }),
-      ]
+      layers: [L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png')]
     })
-
+  },[])  
+  
+  if (currentPos) {
+    L.marker(Object.values(currentPos),{
+      icon: L.icon({
+        iconUrl: 'https://www.clker.com/cliparts/S/o/O/U/j/D/google-maps-marker-for-tnqctn.svg.hi.png',
+        iconSize: [25, 40]
+      })
+    }).addTo(window.map)
   }
 
-  render() {
-    return (<div id='mapView' style={{height: '100vh', width: '100%', position: 'absolute' }}></div>)
-  }
-
-} 
-
-
+  return (<div id='mapView' style={{height: '100vh', width: '100%', position: 'absolute' }} ></div>)
+}
 
 export default MapConatiner;
