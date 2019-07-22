@@ -2,9 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const MapConatiner = ({ markerPos }) => {
+const MapConatiner = ({ markers }) => {
   const map = useRef(null);
-  const marker = useRef(null);
 
   useEffect(() => {
     map.current = L.map('mapView', {
@@ -14,25 +13,37 @@ const MapConatiner = ({ markerPos }) => {
     });
   }, []);
 
-  if (markerPos) {
-    marker.current = L.marker(Object.values(markerPos), {
-      draggable: true,
-      icon: L.icon({
-        iconUrl:
-          'https://www.clker.com/cliparts/S/o/O/U/j/D/google-maps-marker-for-tnqctn.svg.hi.png',
-        iconSize: [25, 40]
-      })
-    })
-      .addTo(map.current)
-      .addEventListener('moveend', e => {
-        console.log(e.target.getLatLng());
-      });
-  }
+  useEffect(() => {
+    markers.map(marker => {
+      const renderedMarkers = Object.values(map.current._layers).map(
+        isRendered => isRendered.options.markerId
+      );
+
+      if (!renderedMarkers.includes(marker.markerId)) {
+        L.marker(marker.coords, {
+          markerId: marker.markerId,
+          draggable: true,
+          icon: L.icon({
+            iconUrl:
+              'https://www.clker.com/cliparts/S/o/O/U/j/D/google-maps-marker-for-tnqctn.svg.hi.png',
+            iconSize: [25, 40]
+          })
+        })
+          .addTo(map.current)
+          .on('click', e => {
+            console.log(e.target);
+          })
+          .addEventListener('moveend', e => {
+            console.log('moved finished');
+          });
+      }
+    });
+  }, [markers]);
 
   return (
     <div
       id='mapView'
-      style={{ height: '100vh', width: '100%', position: 'absolute' }}
+      style={{ height: '100vh', width: '100%', gridArea: 'main' }}
     />
   );
 };
